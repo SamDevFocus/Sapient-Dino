@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background: linear-gradient(270deg, #3E8997 0.16%, #FF6200 116.88%);
+    padding: 0;
+    margin: 0;
+
+    font-family: "Jost", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+input[type="text"] {
+    border: none;
+    outline: none;
+}
+
+
+
+main {
+    display: flex;
+}
+
+.painel-lateralEsquerdo {
+    width: 315px;
+    height: 884px;
+    flex-shrink: 0;
+
+    border-radius: 50px 0 0 50px;
+    border: 5px solid #d9d9d900;
+    background: rgba(217, 217, 217, 0.30);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.painel-lateralDireito {
+    width: 939px;
+    height: 884px;
+    flex-shrink: 0;
+
+    border-radius: 0 50px 50px 0;
+    border: 5px solid #ffffff1f;
+    background: rgba(217, 217, 217, 0.11);
+    opacity: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+/* Quadrado de inf pagina 1 */
+
+.camp-inf {
+    width: 319px;
+    height: 127px;
+    flex-shrink: 0;
+    border-radius: 28px;
+    background: rgba(217, 217, 217, 0.30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camp-inf-quadrado {
+    width: 70px;
+    height: 70px;
+    flex-shrink: 0;
+    border-radius: 13px;
+    border: 2px solid #C2A38F;
+    background: #FF6200;
+    margin-right: 10px;
+    color: #FFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Jost;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 29px;
+
+}
+
+
+.camp-inf-textoUm {
+    display: flex;
+    width: 177px;
+    height: 34px;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #ffffff;
+    font-family: Jost;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 29px;
+    /* 80.556% */
+    letter-spacing: -1px;
+
+}
+
+
+.camp-inf-textoDois {
+    display: flex;
+    width: 205px;
+    height: 40px;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.58);
+
+    font-family: Jost;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 29px;
+    /* 80.556% */
+    letter-spacing: -1px;
+}
+
+.container-camp-inf {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* fim Quadrado de inf pagina 1 */
+
+/* texto boas-vindas */
+.bem-vindoUM {
+    width: 582px;
+    height: 120px;
+}
+
+.bem-dino {
+    color: #ffffff;
+    font-family: Jost;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 29px;
+    /* 80.556% */
+    letter-spacing: -1px;
+
+    opacity: 100%;
+
+    margin-left: 20px;
+}
+
+.bem-dinotext {
+    color: rgba(255, 255, 255, 0.46);
+    font-family: Jost;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+
+.bem-vindoDois {
+    width: 807px;
+    height: 387px;
+}
+
+.bem-vindotitle {
+    color: #FFF;
+    font-family: Jost;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 580;
+    line-height: 43px;
+    /* 89.583% */
+    text-transform: capitalize;
+}
+
+.bem-vindotext {
+    color: rgba(255, 255, 255, 0.46);
+    font-family: Jost;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: capitalize;
+}
+
+/* texto boas-vindas Final */
+
+
+/* camp-resposta */
+
+.camp-resposta {
+    width: 416px;
+    height: auto;
+    flex-shrink: 0;
+    padding: 15px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(242, 242, 242, 0.22);
+    background: rgba(217, 217, 217, 0.30);
+}
+
+.camp-resposta-texto {
+    color: #FFF;
+    font-family: Jost;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 35px;
+    text-transform: capitalize;
+}
+
+/* FIM camp-resposta */
+
+/* input conversa*/
+.campotext {
+    width: 731px;
+    height: 73px;
+    border-radius: 18px;
+    background: rgba(217, 217, 217, 0.30);
+    padding-left: 20px;
+    display: flex;
+
+}
+
+.conversa {}
+
+/* input conversa final */
+
+/* Input chat */
+.camp-inputChat {
+    width: 535px;
+    height: 68px;
+    flex-shrink: 0;
+
+    border-radius: 42px;
+    border: 1px solid rgba(242, 242, 242, 0.22);
+    background: rgba(217, 217, 217, 0.30);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* deixa o botão na ponta */
+    padding: 0 15px;
+    /* espaço interno */
+}
+
+/* Campo de texto */
+.inputChat {
+    flex: 1;
+    height: 100%;
+    color: #E8E8E8;
+    font-family: Jost;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 43px;
+    /* 268.75% */
+    text-transform: capitalize;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.inputChat::placeholder {
+    color: #E8E8E8;
+    font-family: Jost;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 43px;
+    /* 268.75% */
+    text-transform: capitalize;
+}
+
+/* Botão de envio com SVG */
+.camp-iconeEnvioChat {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.camp-iconeEnvioChat svg {
+    width: 29px;
+    height: 29px;
+    fill: #fff;
+}
+
+/* Efeito ao passar o mouse */
+.camp-iconeEnvioChat:hover {
+    transform: scale(1.3);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Evita borda azul padrão ao clicar */
+.camp-iconeEnvioChat:focus {
+    outline: none;
+}
+
+/* FIM Input chat */
+
+/* header */
+
+.lateralMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    gap: 20px;
+    /* espaço entre os botões */
+    padding: 24px 16px;
+
+
+    width: 220px;
+    /* define uma largura padrão */
+}
+
+.lateralMenu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #FFF;
+    font-family: Jost;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 43px;
+    text-transform: capitalize;
+    text-decoration: none;
+
+    padding: 10px 14px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.lateralMenu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.lateralMenu a svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+}
+
+/* FIM header */
