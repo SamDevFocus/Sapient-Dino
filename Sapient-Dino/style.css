@@ -367,3 +367,43 @@ main {
 }
 
 /* FIM header */
+
+/*  */
+
+.container-biblioteca {
+    width: 80%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    padding: 20px;
+}
+
+.palavra-bilbioteca{
+    width: auto;
+    height: 40px;
+    flex-shrink: 0;
+
+    border-radius: 12px;
+    border: 1px solid rgba(242, 242, 242, 0.22);
+    background: rgba(217, 217, 217, 0.30);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+
+    margin-left: 5px;
+    margin-bottom: 5px;
+
+    color: #FFF;
+    font-family: Jost;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 35px;
+    text-transform: capitalize;
+
+}
+
