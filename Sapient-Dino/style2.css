@@ -23,3 +23,96 @@
     margin-bottom: 10px;
 }
 
+.camp-inputChat {
+    margin-bottom: 20px;
+}
+
+.camp-mensagens {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.camp-mensagens {
+    width: 90%;
+    height: 70vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.3) transparent;
+}
+
+.camp-mensagens::-webkit-scrollbar {
+    width: 8px;
+}
+
+.camp-mensagens::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease;
+}
+
+.mensagem.user {
+    align-self: flex-end;
+}
+
+.mensagem.assistant {
+    align-self: flex-start;
+}
+
+.bubble {
+    padding: 12px 18px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    font-size: 15px;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+}
+
+.mensagem.user .bubble {
+    background: rgba(255, 98, 0, 0.3);
+    border: 1px solid rgba(255, 98, 0, 0.5);
+    align-self: flex-end;
+}
+
+.mensagem.assistant .bubble {
+    background: rgba(62, 137, 151, 0.3);
+    border: 1px solid rgba(62, 137, 151, 0.5);
+    align-self: flex-start;
+}
+
+.mensagem.error .bubble {
+    background: rgba(255, 0, 0, 0.3);
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    color: #fff;
+    align-self: center;
+}
+
+.typing .bubble {
+    color: rgba(255,255,255,0.6);
+    font-style: italic;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,80 +1,98 @@
 <?php
+// chat.php
+// Endpoint que recebe POST { message: "texto", conversation_id: optional }
+// Retorna JSON { success: true, reply: "texto do assistant", messages: [...] }
 
-// 1. DADOS NECESSÁRIOS
-$api_key = ''; // Lembre-se de onde deve armazenar isso (segurança!)
-$url = 'https://api.openai.com/v1/chat/completions';
+header('Content-Type: application/json; charset=utf-8');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'error' => 'Use POST']);
+    exit;
+}
 
-// O JSON (corpo da requisição) que você enviará para a OpenAI
-$data = array(
-    'model' => 'gpt-3.5-turbo', // Ou o modelo que você preferir
-    'messages' => array(
-        array('role' => 'user', 'content' => 'O que é PHP?')
-    ),
-    'temperature' => 0.7
-);
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true);
+if (!isset($data['message']) || trim($data['message']) === '') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Mensagem vazia']);
+    exit;
+}
 
-// Converte o array PHP em uma string JSON para o cURL
-$json_data = json_encode($data);
+$userMessage = trim($data['message']);
 
-// ----------------------------------------------------
-// 2. INICIALIZAR
-// ----------------------------------------------------
-$ch = curl_init(); // Cria um novo recurso cURL
+// --- Configuração da chave ---
+// Recomendado: definir a chave como variavel de ambiente no servidor, ex: OPENAI_API_KEY
+$apiKey = '';
 
-// ----------------------------------------------------
-// 3. CONFIGURAR (Usando curl_setopt)
-// ----------------------------------------------------
+// Se quiser testar localmente e nao usar variavel de ambiente, descomente a linha abaixo
+// $apiKey = 'sk-...SEU_TOKEN_AQUI...';
 
-// Define a URL do endpoint
-curl_setopt($ch, CURLOPT_URL, $url);
+if (!$apiKey) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'API key nao configurada no servidor']);
+    exit;
+}
 
-// Define que queremos o método POST
-curl_setopt($ch, CURLOPT_POST, 1);
+// --- Construir o histórico de conversa (simples) ---
+// Opcional: voce pode manter um historico por session/arquivo/banco. Aqui criaremos um historico minimal
+// que coloca a pergunta do usuario como ultimo item junto com um system prompt inicial.
+$system_prompt = "Você é um assistente útil que responde em português de forma clara e objetiva.";
 
-// Anexa o corpo da requisição (a string JSON)
-curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+$payload = [
+    "model" => "gpt-4o-mini", // Caso nao tenha acesso, troque para "gpt-4o" ou "gpt-3.5-turbo"
+    "messages" => [
+        ["role" => "system", "content" => $system_prompt],
+        ["role" => "user", "content" => $userMessage]
+    ],
+    "temperature" => 0.2,
+    "max_tokens" => 1000,
+];
 
-// Define que o cURL deve retornar a resposta como uma string em vez de imprimi-la diretamente
+// Faz a requisicao para a API da OpenAI
+$ch = curl_init("https://api.openai.com/v1/chat/completions");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Content-Type: application/json",
+    "Authorization: Bearer {$apiKey}"
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-// Define os HEADERS (muito importantes para a OpenAI)
-$headers = array(
-    'Content-Type: application/json', // Informa que o corpo é JSON
-    'Authorization: Bearer ' . $api_key // Autenticação com sua chave
-);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-
-// ----------------------------------------------------
-// 4. EXECUTAR
-// ----------------------------------------------------
 $response = curl_exec($ch);
+$err = curl_error($ch);
+$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 
-// Verificação de erro (boa prática!)
-if (curl_errno($ch)) {
-    // Se houver erro de cURL, ele será exibido
-    $error_msg = curl_error($ch);
-    echo "Erro cURL: " . $error_msg;
+if ($err) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Curl error: ' . $err]);
+    exit;
 }
 
-// ----------------------------------------------------
-// 5. FECHAR
-// ----------------------------------------------------
-curl_close($ch); // Libera os recursos do sistema
-
-// ----------------------------------------------------
-// 6. TRATAR A RESPOSTA (JSON -> Array/Objeto PHP)
-// ----------------------------------------------------
-
-// Transforma a string JSON de resposta em um objeto PHP
-$api_response = json_decode($response);
-
-// Exemplo de uso da resposta:
-if (isset($api_response->choices[0]->message->content)) {
-    echo "Resposta da OpenAI: " . $api_response->choices[0]->message->content;
-} else {
-    echo "Erro na resposta da API: ";
-    print_r($api_response);
+if ($httpcode >= 400) {
+    http_response_code($httpcode);
+    echo json_encode(['success' => false, 'error' => 'OpenAI API returned HTTP ' . $httpcode, 'body' => $response]);
+    exit;
 }
 
-?>
+$respJson = json_decode($response, true);
+if (!$respJson) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Resposta invalida da OpenAI', 'body' => $response]);
+    exit;
+}
+
+// extrai texto do assistant (assumindo formato chat completions)
+$assistantText = '';
+if (isset($respJson['choices'][0]['message']['content'])) {
+    $assistantText = $respJson['choices'][0]['message']['content'];
+} elseif (isset($respJson['choices'][0]['text'])) {
+    $assistantText = $respJson['choices'][0]['text'];
+}
+
+echo json_encode([
+    'success' => true,
+    'reply' => $assistantText,
+    'raw' => $respJson
+]);
