@@ -74,7 +74,7 @@ try {
         <p>Uma biblioteca de soluçoes de duvidas compartlhadas</p>
       </header>
 
-      <!-- 🔍 Barra de pesquisa -->
+      <!-- Barra de pesquisa -->
       <div class="barra-pesquisa-container">
         <input type="text" id="barraPesquisa" placeholder="Pesquisar palavra..." onkeyup="filtrarPalavras()">
       </div>
@@ -92,7 +92,7 @@ try {
                     <p class='texto-resposta'>{$row['resposta']}</p>
                     <form method='POST' action='' onsubmit='return confirmarExclusao(event, {$row['id']})'>
                         <input type='hidden' name='delete_id' value='{$row['id']}'>
-                        <button type='submit' class='botao-deletar'>🗑️ Excluir</button>
+                        <button type='submit' class='botao-deletar'> Excluir</button>
                     </form>
                 </div>";
         }
