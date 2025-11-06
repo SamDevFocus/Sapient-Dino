@@ -19,6 +19,22 @@ O objetivo é criar uma **enciclopédia pessoal inteligente**, construída a par
 
 ---
 
+## 🖼️ Interface do Projeto
+
+Veja abaixo algumas telas do **SapientDino** em funcionamento:  
+
+<div align="center">
+
+| 🏠 Página Inicial | 📚 Biblioteca IA | 💬 Chat com a IA |
+|------------------|------------------|------------------|
+| <img src="home.png" width="280" alt="Home do SapientDino" style="border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);"> | <img src="biblioteca.png" width="280" alt="Biblioteca IA" style="border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);"> | <img src="chat.png" width="280" alt="Chat com IA" style="border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);"> |
+
+</div>
+
+> 💡 As imagens acima representam a interface moderna com estilo **Glassmorphism**, projetada para ser intuitiva, leve e responsiva em qualquer dispositivo.
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 | Tipo | Ferramenta |
