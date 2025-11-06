@@ -2,7 +2,7 @@
 header('Content-Type: application/json; charset=utf-8');
 error_reporting(0); // oculta avisos que quebrariam o JSON
 
-// 🔌 Conexão com o banco
+// Conexão com o banco
 $host = 'localhost';
 $db   = 'dino-db2';
 $user = 'root';
@@ -21,14 +21,14 @@ try {
     exit;
 }
 
-// 🔒 Verifica método
+// Verifica método
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Use POST']);
     exit;
 }
 
-// 📩 Pega o JSON enviado
+// Pega o JSON enviado
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
 if (!isset($data['message']) || trim($data['message']) === '') {
@@ -39,7 +39,7 @@ if (!isset($data['message']) || trim($data['message']) === '') {
 
 $entradaUsuario = trim($data['message']);
 
-// 🔍 1. Verifica se já existe no banco
+// 1. Verifica se já existe no banco
 $stmt = $pdo->prepare("SELECT resposta FROM respostas WHERE titulo = ?");
 $stmt->execute([$entradaUsuario]);
 $result = $stmt->fetch();
@@ -54,13 +54,13 @@ if ($result) {
     exit;
 }
 
-// 🔑 2. Chave da API
+// 2. Chave da API
 $apiKey = '';
 
-// 🧠 3. Prompt base — forçando o GPT a começar com o termo entre aspas
+// 3. Prompt base — forçando o GPT a começar com o termo entre aspas
 $system_prompt = "Responda em português, de forma clara e objetiva. Sempre comece a resposta com o termo pesquisado entre aspas. Exemplo: \"Sapientia\" é uma palavra em latim que significa sabedoria.";
 
-// 📨 4. Monta payload da requisição
+// 4. Monta payload da requisição
 $payload = [
     "model" => "gpt-4o-mini",
     "messages" => [
@@ -71,7 +71,7 @@ $payload = [
     "max_tokens" => 1000,
 ];
 
-// 🚀 5. Faz requisição à API OpenAI
+// 5. Faz requisição à API OpenAI
 $ch = curl_init("https://api.openai.com/v1/chat/completions");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
@@ -86,7 +86,7 @@ $response = curl_exec($ch);
 $err = curl_error($ch);
 curl_close($ch);
 
-// ⚠️ 6. Tratamento de erros
+// 6. Tratamento de erros
 if ($err) {
     http_response_code(500);
     echo json_encode(['success' => false, 'error' => 'Erro CURL: ' . $err]);
@@ -102,16 +102,16 @@ if (!$respJson || !isset($respJson['choices'][0]['message']['content'])) {
 
 $resposta = $respJson['choices'][0]['message']['content'];
 
-// 🧩 7. Extrai o título entre aspas
+// 7. Extrai o título entre aspas
 preg_match('/^"([^"]+)"/', $resposta, $matches);
 $tituloExtraido = $matches[1] ?? $entradaUsuario;
 
-// 💾 8. Salva no banco (titulo extraído + resposta)
+// 8. Salva no banco (titulo extraído + resposta)
 $stmt = $pdo->prepare("INSERT INTO respostas (titulo, resposta) VALUES (?, ?)
                        ON DUPLICATE KEY UPDATE resposta = VALUES(resposta)");
 $stmt->execute([$tituloExtraido, $resposta]);
 
-// ✅ 9. Retorna resposta final
+// 9. Retorna resposta final
 echo json_encode([
     'success' => true,
     'titulo' => $tituloExtraido,
