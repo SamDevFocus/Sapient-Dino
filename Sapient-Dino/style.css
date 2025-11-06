@@ -28,6 +28,12 @@ main {
     display: flex;
 }
 
+.logo{
+    height: 200px;
+    width: 200;
+
+}
+
 .painel-lateralEsquerdo {
     width: 315px;
     height: 884px;
@@ -40,6 +46,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
 }
 
 .painel-lateralDireito {
@@ -147,18 +154,14 @@ main {
 }
 
 .bem-dino {
-    color: #ffffff;
+    color: #FFF;
     font-family: Jost;
-    font-size: 36px;
+    font-size: 48px;
     font-style: normal;
-    font-weight: 400;
-    line-height: 29px;
-    /* 80.556% */
-    letter-spacing: -1px;
-
-    opacity: 100%;
-
-    margin-left: 20px;
+    font-weight: 580;
+    line-height: 43px;
+    /* 89.583% */
+    text-transform: capitalize;
 }
 
 .bem-dinotext {
@@ -169,12 +172,14 @@ main {
     font-weight: 400;
     margin-left: 20px;
     margin-bottom: 20px;
+    
 }
 
 
 .bem-vindoDois {
     width: 807px;
     height: 387px;
+    margin-left: 600px;
 }
 
 .bem-vindotitle {
@@ -237,7 +242,9 @@ main {
 
 }
 
-.conversa {}
+.conversa {
+    
+}
 
 /* input conversa final */
 
@@ -330,7 +337,7 @@ main {
 
     gap: 20px;
     /* espaço entre os botões */
-    padding: 24px 16px;
+    padding: 50px 42px;
 
 
     width: 220px;
@@ -341,18 +348,21 @@ main {
     display: flex;
     align-items: center;
     gap: 12px;
-
     color: #FFF;
     font-family: Jost;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 43px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 200px;
     text-transform: capitalize;
     text-decoration: none;
 
     padding: 10px 14px;
     border-radius: 8px;
     transition: background 0.3s ease, transform 0.2s ease;
+}
+a {
+    width: 100%;
+    height:90px;
 }
 
 .lateralMenu a:hover {
@@ -361,8 +371,8 @@ main {
 }
 
 .lateralMenu a svg {
-    width: 24px;
-    height: 24px;
+    width: 60px;
+    height: 60px;
     fill: white;
 }
 

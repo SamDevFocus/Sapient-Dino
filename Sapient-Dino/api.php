@@ -1,15 +1,34 @@
 <?php
-// chat.php
-// Endpoint que recebe POST { message: "texto", conversation_id: optional }
-// Retorna JSON { success: true, reply: "texto do assistant", messages: [...] }
-
 header('Content-Type: application/json; charset=utf-8');
+error_reporting(0); // oculta avisos que quebrariam o JSON
+
+// 🔌 Conexão com o banco
+$host = 'localhost';
+$db   = 'dino-db2';
+$user = 'root';
+$pass = 'root';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'error' => 'Erro na conexão: ' . $e->getMessage()]);
+    exit;
+}
+
+// 🔒 Verifica método
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Use POST']);
     exit;
 }
 
+// 📩 Pega o JSON enviado
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
 if (!isset($data['message']) || trim($data['message']) === '') {
@@ -18,37 +37,41 @@ if (!isset($data['message']) || trim($data['message']) === '') {
     exit;
 }
 
-$userMessage = trim($data['message']);
+$entradaUsuario = trim($data['message']);
 
-// --- Configuração da chave ---
-// Recomendado: definir a chave como variavel de ambiente no servidor, ex: OPENAI_API_KEY
-$apiKey = '';
+// 🔍 1. Verifica se já existe no banco
+$stmt = $pdo->prepare("SELECT resposta FROM respostas WHERE titulo = ?");
+$stmt->execute([$entradaUsuario]);
+$result = $stmt->fetch();
 
-// Se quiser testar localmente e nao usar variavel de ambiente, descomente a linha abaixo
-// $apiKey = 'sk-...SEU_TOKEN_AQUI...';
-
-if (!$apiKey) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'API key nao configurada no servidor']);
+if ($result) {
+    // Já existe — retorna do banco
+    echo json_encode([
+        'success' => true,
+        'reply' => $result['resposta'],
+        'fonte' => 'banco'
+    ]);
     exit;
 }
 
-// --- Construir o histórico de conversa (simples) ---
-// Opcional: voce pode manter um historico por session/arquivo/banco. Aqui criaremos um historico minimal
-// que coloca a pergunta do usuario como ultimo item junto com um system prompt inicial.
-$system_prompt = "Você é um assistente útil que responde em português de forma clara e objetiva.";
+// 🔑 2. Chave da API
+$apiKey = '';
 
+// 🧠 3. Prompt base — forçando o GPT a começar com o termo entre aspas
+$system_prompt = "Responda em português, de forma clara e objetiva. Sempre comece a resposta com o termo pesquisado entre aspas. Exemplo: \"Sapientia\" é uma palavra em latim que significa sabedoria.";
+
+// 📨 4. Monta payload da requisição
 $payload = [
-    "model" => "gpt-4o-mini", // Caso nao tenha acesso, troque para "gpt-4o" ou "gpt-3.5-turbo"
+    "model" => "gpt-4o-mini",
     "messages" => [
         ["role" => "system", "content" => $system_prompt],
-        ["role" => "user", "content" => $userMessage]
+        ["role" => "user", "content" => $entradaUsuario]
     ],
     "temperature" => 0.2,
     "max_tokens" => 1000,
 ];
 
-// Faz a requisicao para a API da OpenAI
+// 🚀 5. Faz requisição à API OpenAI
 $ch = curl_init("https://api.openai.com/v1/chat/completions");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
@@ -61,38 +84,39 @@ curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
 $response = curl_exec($ch);
 $err = curl_error($ch);
-$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
+// ⚠️ 6. Tratamento de erros
 if ($err) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Curl error: ' . $err]);
-    exit;
-}
-
-if ($httpcode >= 400) {
-    http_response_code($httpcode);
-    echo json_encode(['success' => false, 'error' => 'OpenAI API returned HTTP ' . $httpcode, 'body' => $response]);
+    echo json_encode(['success' => false, 'error' => 'Erro CURL: ' . $err]);
     exit;
 }
 
 $respJson = json_decode($response, true);
-if (!$respJson) {
+if (!$respJson || !isset($respJson['choices'][0]['message']['content'])) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Resposta invalida da OpenAI', 'body' => $response]);
+    echo json_encode(['success' => false, 'error' => 'Resposta inválida da OpenAI', 'body' => $response]);
     exit;
 }
 
-// extrai texto do assistant (assumindo formato chat completions)
-$assistantText = '';
-if (isset($respJson['choices'][0]['message']['content'])) {
-    $assistantText = $respJson['choices'][0]['message']['content'];
-} elseif (isset($respJson['choices'][0]['text'])) {
-    $assistantText = $respJson['choices'][0]['text'];
-}
+$resposta = $respJson['choices'][0]['message']['content'];
 
+// 🧩 7. Extrai o título entre aspas
+preg_match('/^"([^"]+)"/', $resposta, $matches);
+$tituloExtraido = $matches[1] ?? $entradaUsuario;
+
+// 💾 8. Salva no banco (titulo extraído + resposta)
+$stmt = $pdo->prepare("INSERT INTO respostas (titulo, resposta) VALUES (?, ?)
+                       ON DUPLICATE KEY UPDATE resposta = VALUES(resposta)");
+$stmt->execute([$tituloExtraido, $resposta]);
+
+// ✅ 9. Retorna resposta final
 echo json_encode([
     'success' => true,
-    'reply' => $assistantText,
-    'raw' => $respJson
+    'titulo' => $tituloExtraido,
+    'reply' => $resposta,
+    'fonte' => 'api'
 ]);
+exit;
+?>
